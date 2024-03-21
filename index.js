@@ -1,28 +1,50 @@
-require('dotenv').config()
-var express = require('express')
-var bodyParser = require('body-parser')
-const http = require('http')
-var cors = require('cors')
-require('./config/database')
-const route = require('./config/route/index')
-const port = process.env.PORT || 8010
-const {checkApiKey} = require('./config/authorization')
-var app = express()
+const express = require('express');
+const app = express();
+const port = 3000;
 
-const verify_emailsM = require('./models/users/verify_emailsM')
+// Sample array of objects
+const data = [
+  { _id: 12 },
+  { name: 'coinpedia' },
+  { email: 'coinpedia@gmail.com' }
+]
 
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
-app.use(bodyParser.json({ limit: "50mb" }))
-app.use(cors())
+// API endpoint to handle requests
 app.get('/', async(req,res)=>
 {
-    const query = await verify_emailsM.find()
-    res.json({ status: true, message: query})
+    res.json({ status: true, message: 'Index'})
 })
 
-app.use(checkApiKey)
-app.use(route)
-const server = http.createServer(app)
+app.get('/getData/:param', (req, res) => {
+  const param = parseInt(req.params.param)
+  var errobj = {}
 
+  if (param < 1 || param > 3 || isNaN(param)) 
+  {
+    errobj['param'] = 'Invalid parameter. Please provide a value between 1 and 3.'
+  }
 
-server.listen(port)
+  const index = param - 1
+
+  if (index >= data.length) 
+  {
+    errobj['param'] = 'Index not found in the array.'
+  }
+  if(Object.keys(errobj).length)
+  {
+      res.json({status:false, message:errobj})
+  }
+  else
+  { 
+    const result = data[index]
+    res.json({status:true, message:result})
+  }
+
+  
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`)
+})
+
+module.exports =app
