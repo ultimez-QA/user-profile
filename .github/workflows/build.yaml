@@ -23,5 +23,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organizations=ultimez24
-            -Dsonar.projectKey=user
+            -Dsonar.organizations=ultimez-QA
+            -Dsonar.projectKey=ultimez-qa
